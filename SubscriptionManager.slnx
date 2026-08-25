@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/Api/SubscriptionManager.Api/SubscriptionManager.Api.csproj" Id="3365f974-0740-4289-929c-e92dd6cd165d" />
+  <Project Path="src/Aspire/SubscriptionManager.AppHost/SubscriptionManager.AppHost.csproj" />
+  <Project Path="src/Aspire/SubscriptionManager.ServiceDefaults/SubscriptionManager.ServiceDefaults.csproj" />
+</Solution>
