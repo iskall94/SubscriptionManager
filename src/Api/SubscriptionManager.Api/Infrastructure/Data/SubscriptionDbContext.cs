@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using SubscriptionManager.Api.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Api.Domain.Entities;
 
 namespace SubscriptionManager.Api.Infrastructure.Data;
 
-public class SubscriptionDbContext : IdentityDbContext<IdentityUser>
+public class SubscriptionDbContext : IdentityDbContext<ApplicationUser>
 {
     public SubscriptionDbContext(DbContextOptions<SubscriptionDbContext> options) : base(options)
     {

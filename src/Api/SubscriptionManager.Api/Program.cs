@@ -1,14 +1,10 @@
 using Hangfire;
 using Hangfire.PostgreSql;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using SubscriptionManager.Api.Infrastructure.Data;
 using SubscriptionManager.Api.Infrastructure.Identity;
-using SubscriptionManager.Api.Application.Common.Interfaces;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +33,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(builder.Configuration["FrontendUrl"] ?? "http://localhost:5173")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -71,8 +68,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapIdentityApi<ApplicationUser>();
+app.MapGroup("/api").MapIdentityApi<ApplicationUser>();
 
 app.MapHangfireDashboard("/hangfire");
+
+// Applying migrations at startup using Aspire
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<SubscriptionDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 app.Run();
