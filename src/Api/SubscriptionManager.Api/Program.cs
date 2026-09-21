@@ -73,8 +73,13 @@ app.MapGroup("/api").MapIdentityApi<ApplicationUser>();
 app.MapHangfireDashboard("/hangfire");
 
 // Applying migrations at startup using Aspire
-using (var scope = app.Services.CreateScope())
+if (app.Environment.IsDevelopment())
 {
+    await DbSeeding.SeedAsync(app.Services);
+}
+else
+{
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<SubscriptionDbContext>();
     await db.Database.MigrateAsync();
 }
