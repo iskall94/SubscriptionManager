@@ -1,32 +1,41 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { HomePage } from "../pages/HomePage";
-import { LoginPage } from "../pages/LoginPage";
-import { RegisterPage } from "../pages/RegisterPage";
-import { DashboardPage } from "../pages/DashboardPage";
+import  HomePage from "../pages/HomePage";
+//import LoginPage from "../pages/LoginPage";
+//import RegisterPage from "../pages/RegisterPage";
+//import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoute from "../components/ProtectedRoute";
+import Layout from "../components/Layout";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <HomePage />
-    },
-    {
-        path: "/login",
-        element: <LoginPage />
-    },
-    {
-        path: "/register",
-        element: <RegisterPage />
-    },
-    {
-        path: "/dashboard",
-        element: <ProtectedRoute />,
-        children: [
+	{
+    element: <Layout />,
+      children: 
+			[
+        {
+					path: "/",
+					index: true,
+        	element: <HomePage />
+				},
+    		{
+        	path: "/login",
+        	//element: <LoginPage />
+    		},
+    		{
+        	path: "/register",
+        	//element: <RegisterPage />
+    		},
+    		{
+       		element: <ProtectedRoute />,
+        	children: 
+					[
             {
-                element: <DashboardPage />
+							path: "/dashboard",
+              //element: <DashboardPage />
             }
-        ]
-    }
+        	]
+				}
+      ]
+  }
 ]);
 
 export default function AppRouter() {

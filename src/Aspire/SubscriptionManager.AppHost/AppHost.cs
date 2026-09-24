@@ -14,4 +14,8 @@ var api = builder.AddProject<Projects.SubscriptionManager_Api>("api")
     .WithReference(redis)
     .WaitFor(redis);
 
+builder.AddJavaScriptApp("frontend", "../../../frontend", "dev")
+       .WithReference(api)
+       .WithHttpEndpoint(env: "PORT");
+
 builder.Build().Run();
