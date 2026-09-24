@@ -5,7 +5,7 @@ const API_BASE_URL = '/api';
 
 export async function loginUser(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await axios.post<LoginResponse>(
-        `${API_BASE_URL}/auth/login`, 
+        `${API_BASE_URL}/login`, 
         credentials
     );
     return response.data;
