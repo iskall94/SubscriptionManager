@@ -14,7 +14,7 @@ builder.AddNpgsqlDbContext<SubscriptionDbContext>("subscriptiondb");
 builder.AddRedisDistributedCache("cache");
 
 // Identity Configuration
-builder.Services.AddAuthentication();
+builder.Services.AddAuthentication(IdentityConstants.BearerScheme);
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
 {

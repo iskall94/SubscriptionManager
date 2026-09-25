@@ -10,22 +10,31 @@ export default function Navbar() {
     navigate('/login');
   };
 
+  const homePath = isAuthenticated ? "/dashboard" : "/";
+
   return (
     <nav>
-      <Link to="/">Subscription Manager App</Link>
-        <div>
-          {isAuthenticated ? (
+      <div>
+        <Link to={homePath}>Subscription Manager App</Link>
+      </div>
+      <ul>
+        {isAuthenticated ? (
             <>
-              <Link to="/dashboard">Dashboard</Link>
+            <li>
               <button onClick={handleLogout}>Logout</button>
+            </li>
             </>
             ) : (
             <>
-              <Link to="/login">Login</Link>
-              <Link to="/register">Register</Link>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+              <li>
+                <Link to="/register">Register</Link>
+              </li>
             </>
-            )}
-        </div>
+        )}
+      </ul>
     </nav>
   );
 }

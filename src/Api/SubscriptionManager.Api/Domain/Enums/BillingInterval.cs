@@ -2,8 +2,8 @@
 {
     public enum BillingInterval
     {
-        Monthly = 1,
-        Quarterly = 2,
+        Weekly = 1,
+        Monthly = 2,
         Yearly = 3
     }
 }

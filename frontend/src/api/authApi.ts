@@ -10,3 +10,7 @@ export async function loginUser(credentials: LoginRequest): Promise<LoginRespons
     );
     return response.data;
 }
+
+export async function registerUser(credentials: LoginRequest): Promise<void> {
+    await axios.post(`${API_BASE_URL}/register`, credentials);
+}

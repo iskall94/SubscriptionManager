@@ -1,8 +1,12 @@
-import { Link } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
   
 	return (
     <section>
@@ -13,22 +17,6 @@ export default function HomePage() {
         <p>
           Managing these subscriptions can be a hassle, but our app makes it easy to keep track of all your subscriptions in one place.
         </p>
-          <div>
-            {isAuthenticated ? (
-            <Link to="/dashboard">
-            <button>Go to Dashboard</button>
-            </Link>
-            ) : (
-            <>
-            <Link to="/login">
-            <button>Login</button>
-            </Link>
-            <Link to="/register">
-            <button>Register</button>
-            </Link>
-            </>
-                )}
-          </div>
     </section>
   );
 }
