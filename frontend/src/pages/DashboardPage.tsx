@@ -5,6 +5,22 @@ import {
   deleteSubscription 
 } from "../api/subscriptionApi";
 import type { Subscription } from "../types/subscription";
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  TextField,
+  MenuItem,
+  Button,
+  Stack,
+  Alert,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 // Helper function to calculate the next billing date based on the first billing date and interval
 function calculateNextDate(firstBillingDate: string, intervalValue: number): string {
@@ -104,134 +120,174 @@ export default function DashboardPage() {
   };
 
   return (
-    <section>
-      <h2>Subscriptions</h2>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Typography variant="h5" component="h2" gutterBottom sx={{fontWeight:"bold"}} >
+        Subscription Dashboard
+      </Typography>
 
-      {error && <p role="alert">{error}</p>}
-
-      <div>
-        <h3>Total Subscriptions Cost:</h3>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      
+      <Card variant="outlined" sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Total Subscription Costs by Currency
+          </Typography>
         {Object.keys(totals).length === 0 ? (
-          <p>No sum for any subscriptions</p>
+          <Typography variant="body2" color="text.secondary">
+            No subscriptions recorded yet.
+          </Typography>
         ) : (
           Object.entries(totals).map(([curr, sum]) => (
-            <p key={curr}>
-              {curr}: {sum}
-            </p>
+            <Typography key={curr} variant="body1">
+                <strong>{curr}:</strong> {sum}
+              </Typography>
           ))
         )}
-      </div>
+        </CardContent>
+      </Card>
 
-      <hr />
+      <Card variant="outlined" sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Your Current Subscriptions
+          </Typography>
+          {subscriptions.length === 0 ? (
+            <Typography variant="body2" color="text.secondary">
+              There are currently no subscriptions to display.
+            </Typography>
+          ) : (
+            <List>
+              {subscriptions.map((sub) => (
+                <ListItem
+                  key={sub.id}
+                  divider
+                  secondaryAction={
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      color="error"
+                      onClick={() => handleDeleteSubscription(sub.id)}
+                      disabled={isLoading}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  }
+                >
+                  <ListItemText
+                    primary={sub.name}
+                    secondary={`${sub.price} ${sub.currency} (Next billing date: ${sub.nextBillingDate})`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
+        </CardContent>
+      </Card>
 
-      <form onSubmit={handleCreateSubscription}>
-        <label>
-          Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </label>
+      <Card variant="outlined" sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Add New Subscription
+          </Typography>
+          <form onSubmit={handleCreateSubscription}>
+            <Stack spacing={2}>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <TextField
+                  label="Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  fullWidth
+                  required
+                  disabled={isLoading}
+                />
+                <TextField
+                  label="Price"
+                  type="number"
+                  slotProps={{ 
+                    htmlInput: { 
+                      step: "0.01",
+                      min: 0,  
+                    } 
+                  }}
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  fullWidth
+                  required
+                  disabled={isLoading}
+                />
+                <TextField
+                  select
+                  label="Currency"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  sx={{ minWidth: 120 }}
+                  disabled={isLoading}
+                >
+                  <MenuItem value="SEK">SEK</MenuItem>
+                  <MenuItem value="EUR">EUR</MenuItem>
+                  <MenuItem value="USD">USD</MenuItem>
+                  </TextField>
+              </Stack>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>          
+                <TextField
+                  select
+                  label="Billing Cycle"
+                  value={interval}
+                  onChange={(e) => {
+                    const newInterval = (Number(e.target.value));
+                    setInterval(newInterval);
+                    setNextBillingDate(calculateNextDate(firstBillingDate, newInterval));
+                  }}
+                  fullWidth
+                  disabled={isLoading}
+                  >
+                    <MenuItem value={1}>Weekly</MenuItem>
+                    <MenuItem value={2}>Monthly</MenuItem>
+                    <MenuItem value={3}>Yearly</MenuItem>
+                  </TextField>
 
-        <label>
-          Price:
-          <input
-            type="number"
-            step="0.01"
-						min="0"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-        </label>
+                  <TextField
+                    label="First Billing Date"
+                    type="date"
+                    value={firstBillingDate}
+                    onChange={(e) => {
+                      const newFirstBillingDate = e.target.value;
+                      setfirstBillingDate(newFirstBillingDate);
+                      setNextBillingDate(calculateNextDate(newFirstBillingDate, interval));
+                    }}
+                    slotProps={{ inputLabel: { shrink: true } }}
+                    fullWidth
+                    required
+                    disabled={isLoading}
+                  />
+                
+                <TextField
+                  label = "Next Billing Date"
+                  type="date"
+                  value={nextBillingDate}
+                  slotProps={{ inputLabel: { shrink: true } }}
+                  fullWidth
+                  required
+                  disabled
+                />
+              </Stack>
 
-        <label>
-          Currency:
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            disabled={isLoading}
-          >
-            <option value="SEK">SEK</option>
-            <option value="EUR">EUR</option>
-            <option value="USD">USD</option>
-          </select>
-        </label>
-
-        <label>
-          Billing Cycle:
-          <select
-            value={interval}
-            onChange={(e) => setInterval(Number(e.target.value))}
-            disabled={isLoading}
-          >
-            <option value={1}>Weekly</option>
-            <option value={2}>Monthly</option>
-            <option value={3}>Yearly</option>
-          </select>
-        </label>
-
-				<label>
-  				First Billing Date:
-  				<input
-  					type="date"
-    				value={firstBillingDate}
-   					onChange={(e) => {
-							const newFirstBillingDate = e.target.value;
-							setfirstBillingDate(newFirstBillingDate);
-							setNextBillingDate(calculateNextDate(newFirstBillingDate, interval));
-						}}
-    				required
-    				disabled={isLoading}
-  				/>
-				</label>
-
-        <label>
-          Next Billing Date:
-          <input
-            type="date"
-            value={nextBillingDate}
-            onChange={(e) => {
-      				const newInterval = Number(e.target.value);
-      				setInterval(newInterval);
-      				setNextBillingDate(calculateNextDate(firstBillingDate, newInterval));
-    				}}
-            required
-            disabled={isLoading}
-          />
-        </label>
-
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Adding..." : "Add Subscription"}
-        </button>
-      </form>
-
-      <hr />
-
-      {subscriptions.length === 0 ? (
-        <p>There are currently no subscriptions to be displayed.</p>
-      ) : (
-        <ul>
-          {subscriptions.map((sub) => (
-            <li key={sub.id}>
-              <span>
-                {sub.name} - {sub.price} {sub.currency} (Next: {sub.nextBillingDate})
-              </span>{" "}
-              <button
-                type="button"
-                onClick={() => handleDeleteSubscription(sub.id)}
+              <Button 
+                type="submit"
+                variant="contained"
+                size="medium"
                 disabled={isLoading}
               >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+                {isLoading ? "Adding..." : "Add Subscription"}
+              </Button>
+            </Stack>
+          </form>
+        </CardContent> 
+      </Card>
+    </Container>
   );
 }

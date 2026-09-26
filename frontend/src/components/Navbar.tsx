@@ -1,9 +1,21 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
+import { 
+  AppBar, 
+  Toolbar,
+  Typography,
+  Button, 
+  Box, 
+  IconButton
+} from "@mui/material"
+import { useColorMode } from '../context/useColorMode';
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 export default function Navbar() {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const { mode, toggleColorMode } = useColorMode();
 
   const handleLogout = () => {
     logout();
@@ -13,28 +25,79 @@ export default function Navbar() {
   const homePath = isAuthenticated ? "/dashboard" : "/";
 
   return (
-    <nav>
-      <div>
-        <Link to={homePath}>Subscription Manager App</Link>
-      </div>
-      <ul>
-        {isAuthenticated ? (
+    <AppBar 
+      position="static" 
+      elevation={0}
+      sx={{
+        bgcolor: "background.paper",
+        borderBottom: 1,
+        borderColor: "divider",
+        color: "text.primary",
+      }}
+    >
+      <Toolbar>
+        <Typography
+            variant="h6"
+            component={RouterLink}
+            to={homePath}
+            sx={{
+              flexGrow: 1,
+              textAlign: "center",
+              textDecoration: "none",
+              color: "inherit",
+              fontWeight: "bold",
+            }}
+          >
+          Subscription Manager
+        </Typography>
+
+        <Box 
+          sx={{
+            position: "absolute",
+            right: 16,
+            alignItems: "center",
+            display: "flex", 
+            gap: 1 
+          }}
+        >
+          <IconButton
+            onClick={toggleColorMode}
+            color="inherit"
+            aria-label="Toggle light/dark mode"
+            size="small"
+          >
+            {mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+        
+          {isAuthenticated ? (
             <>
-            <li>
-              <button onClick={handleLogout}>Logout</button>
-            </li>
+              <Button
+                onClick={handleLogout}
+                color="inherit"
+              >
+                Log Out
+              </Button>
             </>
             ) : (
             <>
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
-              <li>
-                <Link to="/register">Register</Link>
-              </li>
+              <Button
+                component={RouterLink}
+                to="/login"
+                color="inherit"
+              >
+                Log In
+              </Button>
+              <Button
+                component={RouterLink}
+                to="/register"
+                color="inherit"
+              >
+                Register
+              </Button>
             </>
-        )}
-      </ul>
-    </nav>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }

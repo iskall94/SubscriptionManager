@@ -1,8 +1,19 @@
 import {useState, type SubmitEvent} from "react";
 import { useAuth } from "../context/useAuth";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link as RouterLink} from "react-router-dom";
 import { loginUser } from "../api/authApi";
 import axios from "axios";
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  Alert,
+  Link,
+} from "@mui/material";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -35,44 +46,60 @@ export default function LoginPage() {
   };
 
 	return (
-		<section>
-			<h2>Log In</h2>
+		<Container maxWidth="xs" sx={{ py: 6 }}>
+			<Card variant="outlined">
+				<CardContent sx={{ p: 3 }}>
+					<Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: "bold" }}>
+            Log In
+          </Typography>
 
-			{error && <p role="alert">{error}</p>}
+					{error && (
+						<Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+					)}
 
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor="email">Email:</label>
-					<input
-						id="email"
-						type="email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						autoComplete="email"
-						required
-						disabled={isLoading}
-					/>
-				</div>
-
-				<div>
-					<label htmlFor="password">Password:</label>
-					<input
-						id="password"
-						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						autoComplete="current-password"
-						required
-						disabled={isLoading}
-					/>
-				</div>
-				<button type="submit" disabled={isLoading}>
-					{isLoading ? "Logging in..." : "Log In"}
-				</button>
-			</form>
-			<p>
-				Don't have an account? <Link to="/register">Register here</Link>
-			</p>
-		</section>
+					<form onSubmit={handleSubmit}>
+						<Stack spacing={2}>
+							<TextField
+								label="Email"
+								type="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								autoComplete="email"
+								fullWidth
+								required
+								disabled={isLoading}
+							/>
+							<TextField
+								label="Password"
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								autoComplete="current-password"
+								fullWidth
+								required
+								disabled={isLoading}
+							/>
+							<Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={isLoading}
+              >
+                {isLoading ? "Logging in..." : "Log In"}
+              </Button>
+						</Stack>
+					</form>
+					<Typography variant="body2" sx={{ mt: 2, textAlign: "center" }}>
+            Don't have an account?{" "}
+            <Link component={RouterLink} to="/register">
+              Register here
+            </Link>
+          </Typography>
+				</CardContent>
+			</Card>
+		</Container>
 	);
 }

@@ -1,8 +1,19 @@
 import { useState, type SubmitEvent } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import axios from "axios";
 import { loginUser, registerUser } from "../api/authApi";
 import { useAuth } from "../context/useAuth";
+import {
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Stack,
+  Alert,
+  Link,
+} from "@mui/material";
 
 export default function RegisterPage() {
 	const [email, setEmail] = useState("");
@@ -48,55 +59,71 @@ export default function RegisterPage() {
 	};
 
 	return (
-		<section>
-			<h2>Register Account</h2>
+		<Container maxWidth="xs" sx={{ py: 6 }}>
+			<Card variant="outlined">
+				<CardContent sx={{ p: 3 }}>
+					<Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: "bold" }}>
+            Register Account
+          </Typography>
 
-			{error && <p role="alert">{error}</p>}
+					{error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
 
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor="email">Email:</label>
-					<input
-						id="email"
-						type="email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-						autoComplete="email"
-						required
-						disabled={isLoading}
-					/>
-				</div>
-				<div>
-					<label htmlFor="password">Password:</label>
-					<input
-						id="password"
-						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						autoComplete="new-password"
-						required
-						disabled={isLoading}
-					/>
-				</div>
-				<div>
-					<label htmlFor="confirmPassword">Confirm Password:</label>
-					<input
-						id="confirmPassword"
-						type="password"
-						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
-						autoComplete="new-password"
-						required
-						disabled={isLoading}
-					/>
-				</div>
-				<button type="submit" disabled={isLoading}>
-					{isLoading ? "Registering..." : "Register"}
-				</button>
-			</form>
-			<p>
-				Already have an account? <Link to="/login">Log in here</Link>
-			</p>
-		</section>
+					<form onSubmit={handleSubmit}>
+						<Stack spacing={2}>
+							<TextField
+								label="Email"
+								type="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								autoComplete="email"
+								fullWidth
+								required
+								disabled={isLoading}
+							/>
+							<TextField
+								label="Password"
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								autoComplete="new-password"
+								fullWidth
+								required
+								disabled={isLoading}
+							/>
+							<TextField
+								label="Confirm Password"
+								type="password"
+								value={confirmPassword}
+								onChange={(e) => setConfirmPassword(e.target.value)}
+								autoComplete="new-password"
+								fullWidth
+								required
+								disabled={isLoading}
+							/>
+							<Button
+								type="submit"
+								variant="contained"
+								size="large"
+								fullWidth
+								disabled={isLoading}
+							>
+								{isLoading ? "Registering..." : "Register"}
+							</Button>
+						</Stack>
+					</form>
+
+					<Typography variant="body2" sx={{ mt: 2, textAlign: "center" }}>
+						Already have an account?{" "}
+						<Link component={RouterLink} to="/login">
+							Log in here
+						</Link>
+					</Typography>
+        </CardContent>
+      </Card>
+		</Container>
 	);
 }

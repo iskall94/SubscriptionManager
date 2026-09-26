@@ -1,13 +1,14 @@
-import './App.css'
 import { AuthProvider } from './context/AuthProvider'
 import AppRouter from './routes/AppRouter'
+import { ColorModeProvider } from './context/ColorModeProvider';
 
 function App() {
-
   return (
-    <AuthProvider>
-      <AppRouter />
-    </AuthProvider>
+		<ColorModeProvider>
+			<AuthProvider>
+				<AppRouter />
+			</AuthProvider>
+		</ColorModeProvider>
   )
 }
 
