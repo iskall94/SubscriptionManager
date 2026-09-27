@@ -3,6 +3,15 @@ import type { LoginRequest, LoginResponse } from "../types/auth";
 
 const API_BASE_URL = '/api';
 
+export function getAuthHeader() {
+	const token = localStorage.getItem('accessToken')
+	return  {
+			headers: {
+					Authorization: `Bearer ${token}`
+			}
+	};
+}
+
 export async function loginUser(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await axios.post<LoginResponse>(
         `${API_BASE_URL}/login`, 

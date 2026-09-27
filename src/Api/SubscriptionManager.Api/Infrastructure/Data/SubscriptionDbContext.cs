@@ -24,11 +24,5 @@ public class SubscriptionDbContext : IdentityDbContext<ApplicationUser>
                   .WithMany(c => c.Subscriptions)
                   .OnDelete(DeleteBehavior.Restrict);
         });
-
-        builder.Entity<Category>().HasData(
-            new Category { Id = 1, Name = "Streaming" },
-            new Category { Id = 2, Name = "Software" },
-            new Category { Id = 3, Name = "Gaming" }
-        );
     }
 }

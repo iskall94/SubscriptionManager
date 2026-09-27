@@ -4,8 +4,10 @@ export interface Subscription {
   price: number;
 	currency: string;
   interval: number;
-  startDate?: string;
-	nextBillingDate?: string;
+  firstBillingDate: string;
+	nextBillingDate: string;
+  categoryId: number;
+  categoryName: string;
 }
 
 export interface CreateSubscriptionRequest {
@@ -15,5 +17,15 @@ export interface CreateSubscriptionRequest {
 	interval: number;
 	firstBillingDate: string;
 	nextBillingDate: string;
-	categoryId?: number;
+	categoryId: number;
+}
+
+export interface UpdateSubscriptionRequest {
+  name: string;
+  price: number;
+  currency: string;
+  interval: number;
+  firstBillingDate: string;
+  nextBillingDate: string;
+  categoryId: number;
 }

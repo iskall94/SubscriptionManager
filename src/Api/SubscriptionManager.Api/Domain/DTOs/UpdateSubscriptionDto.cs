@@ -7,7 +7,7 @@ public record UpdateSubscriptionDto(
     decimal Price,
     string Currency,
     BillingInterval Interval,
+    DateOnly FirstBillingDate,
     DateOnly NextBillingDate,
-    bool IsActive,
     int CategoryId
 );

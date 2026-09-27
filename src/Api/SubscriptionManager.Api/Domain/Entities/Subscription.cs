@@ -19,6 +19,7 @@ public class Subscription
     public BillingInterval Interval { get; set; }
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public DateTime? Updated { get; set; }
+    public DateOnly FirstBillingDate { get; set; }
     public DateOnly NextBillingDate {  get; set; }
     public bool IsActive { get; set; }
 
@@ -27,7 +28,7 @@ public class Subscription
 
     public int CategoryId { get; set; }
     [ForeignKey(nameof(CategoryId))]
-    public Category Category { get; set; } = new();
+    public Category? Category { get; set; }
 
     public ICollection<PaymentHistory> PaymentHistories { get; set; } = [];
 }

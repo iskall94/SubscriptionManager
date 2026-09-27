@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SubscriptionManager.Api.Infrastructure.Data;
@@ -11,9 +12,11 @@ using SubscriptionManager.Api.Infrastructure.Data;
 namespace SubscriptionManager.Api.Migrations
 {
     [DbContext(typeof(SubscriptionDbContext))]
-    partial class SubscriptionDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260927150249_SubFirstBilling")]
+    partial class SubFirstBilling
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,6 +173,23 @@ namespace SubscriptionManager.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Streaming"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Software"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Gaming"
+                        });
                 });
 
             modelBuilder.Entity("SubscriptionManager.Api.Domain.Entities.PaymentHistory", b =>

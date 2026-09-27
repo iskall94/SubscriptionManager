@@ -7,6 +7,7 @@ public record CreateSubscriptionDto(
     decimal Price,
     string Currency,
     BillingInterval Interval,
+    DateOnly FirstBillingDate,
     DateOnly NextBillingDate,
-    int CategoryId = 1 // Default Category
+    int CategoryId = 0 // Default Category
 );

@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using SubscriptionManager.Api.Infrastructure.Data;
+using SubscriptionManager.Api.Infrastructure.Data.Repositories;
 using SubscriptionManager.Api.Infrastructure.Identity;
+using SubscriptionManager.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +51,12 @@ builder.Services.AddHangfire(config => config
     .UseRecommendedSerializerSettings()
     .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString)));
 builder.Services.AddHangfireServer();
+
+// Dependency Injection for Repositories and Services
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 

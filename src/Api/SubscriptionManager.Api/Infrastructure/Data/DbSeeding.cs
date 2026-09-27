@@ -17,6 +17,20 @@ public static class DbSeeding
 
         await db.Database.MigrateAsync();
 
+        if (!await db.Categories.AnyAsync())
+        {
+            db.Categories.AddRange(
+                new Category { Name = "No Category" },
+                new Category { Name = "Streaming" },
+                new Category { Name = "Software" },
+                new Category { Name = "Gaming" },
+                new Category { Name = "Utilities" },
+                new Category { Name = "Other" }
+            );
+
+            await db.SaveChangesAsync();
+        }
+
         const string emailUser = "dev@test.com";
 
         var user = await userManager.FindByEmailAsync(emailUser);

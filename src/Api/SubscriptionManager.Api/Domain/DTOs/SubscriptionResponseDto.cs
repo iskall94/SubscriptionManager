@@ -8,8 +8,8 @@ public record SubscriptionResponseDto(
     decimal Price,
     string Currency,
     BillingInterval Interval,
+    DateOnly FirstBillingDate,
     DateOnly NextBillingDate,
-    bool IsActive,
     int CategoryId,
-    string CategoryName
+    string? CategoryName
 );

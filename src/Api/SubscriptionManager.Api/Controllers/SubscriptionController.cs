@@ -1,130 +1,81 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Api.Domain.DTOs;
-using SubscriptionManager.Api.Domain.Entities;
-using SubscriptionManager.Api.Infrastructure.Data;
+using SubscriptionManager.Api.Services;
 using System.Security.Claims;
 
 namespace SubscriptionManager.Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/subscriptions")]
 public class SubscriptionController : ControllerBase
 {
-	private readonly SubscriptionDbContext _db;
-	public SubscriptionController(SubscriptionDbContext db)
-	{
-		_db = db;
-	}
+    private readonly ISubscriptionService _subscriptionService;
 
-	private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+    public SubscriptionController(ISubscriptionService subscriptionService)
+    {
+        _subscriptionService = subscriptionService;
+    }
 
-	[HttpGet]
-	public async Task<IActionResult> GetAll()
-	{
-		var subscriptions = await _db.Subscriptions
-			.AsNoTracking()
-			.Where(s => s.UserId == UserId)
-			.Select(s => new SubscriptionResponseDto(
-				s.Id,
-				s.Name,
-				s.Price,
-				s.Currency,
-				s.Interval,
-				s.NextBillingDate,
-				s.IsActive,
-				s.CategoryId,
-				s.Category.Name
-			))
-			.ToListAsync();
+    private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-		return Ok(subscriptions);
-	}
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var subscriptions = await _subscriptionService.GetAllAsync(UserId);
+        return Ok(subscriptions);
+    }
 
-	[HttpGet("{id:int}")]
-	public async Task<IActionResult> GetById(int id)
-	{
-		var subscription = await _db.Subscriptions
-			.AsNoTracking()
-			.Where(s => s.Id == id && s.UserId == UserId)
-			.Select(s => new SubscriptionResponseDto(
-				s.Id,
-				s.Name,
-				s.Price,
-				s.Currency,
-				s.Interval,
-				s.NextBillingDate,
-				s.IsActive,
-				s.CategoryId,
-				s.Category.Name
-			))
-			.FirstOrDefaultAsync();
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var subscription = await _subscriptionService.GetByIdAsync(id, UserId);
 
-		if (subscription is null)
-		{
-			return NotFound();
-		}
+        if (subscription is null)
+        {
+            return NotFound();
+        }
 
-		return Ok(subscription);
-	}
+        return Ok(subscription);
+    }
 
-	[HttpPost] 
-	public async Task<IActionResult> Create([FromBody] CreateSubscriptionDto dto)
-	{
-		var category = await _db.Categories.FindAsync(dto.CategoryId);
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateSubscriptionDto dto)
+    {
+        var response = await _subscriptionService.CreateAsync(dto, UserId);
 
-		if (category is null)
-		{
-			return BadRequest("Category not found.");
-		}
+        if (response is null)
+        {
+            return BadRequest("Category not found.");
+        }
 
-		var sub = new Subscription
-		{
-			Name = dto.Name,
-			Price = dto.Price,
-			Currency = dto.Currency,
-			Interval = dto.Interval,
-			NextBillingDate = dto.NextBillingDate,
-			CategoryId = dto.CategoryId,
-			UserId = UserId,
-			IsActive = true,
-			Created = DateTime.UtcNow
-		};
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
+    }
 
-		_db.Subscriptions.Add(sub);
-		await _db.SaveChangesAsync();
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var success = await _subscriptionService.DeleteAsync(id, UserId);
 
-		var response = new SubscriptionResponseDto(
-			sub.Id,
-			sub.Name,
-			sub.Price,
-			sub.Currency,
-			sub.Interval,
-			sub.NextBillingDate,
-			sub.IsActive,
-			sub.CategoryId,
-			category.Name
-		);
+        if (!success)
+        {
+            return NotFound();
+        }
 
-		return CreatedAtAction(nameof(GetById), new { id = sub.Id }, response);
-	}
+        return NoContent();
+    }
 
-	[HttpDelete("{id:int}")]
-	public async Task<IActionResult> Delete(int id)
-	{
-		var subscription = await _db.Subscriptions
-			.FirstOrDefaultAsync(s => s.Id == id && s.UserId == UserId);
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateSubscriptionDto dto)
+    {
+        var response = await _subscriptionService.UpdateAsync(id, dto, UserId);
 
-		if (subscription is null) 
-		{ 
-			return NotFound();
-		}
+        if (response is null)
+        {
+            return NotFound();
+        }
 
-		_db.Subscriptions.Remove(subscription);
-		await _db.SaveChangesAsync();
-
-		return NoContent();
-	}
+        return Ok(response);
+    }
 }

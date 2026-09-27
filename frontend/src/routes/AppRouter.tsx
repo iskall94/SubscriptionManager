@@ -5,6 +5,7 @@ import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Layout from "../components/Layout";
+import NotFoundPage from "../pages/NotFoundPage";
 
 const router = createBrowserRouter([
 	{
@@ -33,7 +34,11 @@ const router = createBrowserRouter([
               element: <DashboardPage />
             }
         	]
-				}
+				},
+				{
+        path: "*",
+        element: <NotFoundPage />,
+      	},
       ]
   }
 ]);
