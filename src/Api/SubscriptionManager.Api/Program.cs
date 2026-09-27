@@ -1,8 +1,9 @@
-using Hangfire;
-using Hangfire.PostgreSql;
+//using Hangfire;
+//using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using SubscriptionManager.Api.Infrastructure;
 using SubscriptionManager.Api.Infrastructure.Data;
 using SubscriptionManager.Api.Infrastructure.Data.Repositories;
 using SubscriptionManager.Api.Infrastructure.Identity;
@@ -13,7 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Aspire Services
 builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<SubscriptionDbContext>("subscriptiondb");
-builder.AddRedisDistributedCache("cache");
+
+//builder.AddRedisDistributedCache("cache");
 
 // Identity Configuration
 builder.Services.AddAuthentication(IdentityConstants.BearerScheme);
@@ -44,13 +46,13 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 // Hangfire setup
-var connectionString = builder.Configuration.GetConnectionString("subscriptiondb");
-builder.Services.AddHangfire(config => config
-    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-    .UseSimpleAssemblyNameTypeSerializer()
-    .UseRecommendedSerializerSettings()
-    .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString)));
-builder.Services.AddHangfireServer();
+//var connectionString = builder.Configuration.GetConnectionString("subscriptiondb");
+//builder.Services.AddHangfire(config => config
+//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+//    .UseSimpleAssemblyNameTypeSerializer()
+//    .UseRecommendedSerializerSettings()
+//    .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString)));
+//builder.Services.AddHangfireServer();
 
 // Dependency Injection for Repositories and Services
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
@@ -58,9 +60,14 @@ builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
@@ -78,18 +85,19 @@ app.MapControllers();
 
 app.MapGroup("/api").MapIdentityApi<ApplicationUser>();
 
-app.MapHangfireDashboard("/hangfire");
+//app.MapHangfireDashboard("/hangfire");
 
-// Applying migrations at startup using Aspire
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    await DbSeeding.SeedAsync(app.Services);
-}
-else
-{
-    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<SubscriptionDbContext>();
+
     await db.Database.MigrateAsync();
+
+    // Applying migrations at startup using Aspire
+    if (app.Environment.IsDevelopment())
+    {
+        await DbSeeding.SeedAsync(app.Services);
+    }
 }
 
 app.Run();
