@@ -22,10 +22,10 @@ jobs:
           include-prerelease: true
 
       - name: Restore NuGet Packages
-        run: dotnet restore SubscriptionManager.sln
+        run: dotnet restore
 
       - name: Build All Projects (.NET)
-        run: dotnet build SubscriptionManager.sln --no-restore --configuration Release
+        run: dotnet build --no-restore --configuration Release
 
   frontend-check:
     name: Build React Frontend
