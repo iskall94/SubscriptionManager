@@ -8,7 +8,7 @@ on:
     branches:
       - master
     paths:
-      - './src/Api/SubscriptionManager.Api'
+      - 'src/Api/SubscriptionManager.Api/**'
   workflow_dispatch:
 
 jobs:
