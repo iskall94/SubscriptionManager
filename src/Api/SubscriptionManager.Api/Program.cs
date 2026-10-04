@@ -69,11 +69,8 @@ app.MapDefaultEndpoints();
 
 app.UseExceptionHandler();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapScalarApiReference();
-    app.MapOpenApi();
-}
+app.MapScalarApiReference();
+app.MapOpenApi();
 
 app.UseHttpsRedirection();
 
