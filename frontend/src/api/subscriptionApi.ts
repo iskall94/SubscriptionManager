@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { Subscription, CreateSubscriptionRequest } from '../types/subscription';
 import { getAuthHeader } from './authApi';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 export async function getSubscriptions(): Promise<Subscription[]> {
 	const response = await axios.get<Subscription[]>(
