@@ -1,4 +1,5 @@
 import { useState, useEffect, type SubmitEvent } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { 
   getSubscriptions, 
   createSubscription, 
@@ -26,10 +27,12 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Box
+  Box,
+  Tooltip
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 
 export default function DashboardPage() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
@@ -170,17 +173,36 @@ const handleCloseDialog = () => {
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography 
-        variant="h6" 
-        component="h2"
-        gutterBottom 
-        sx={{
-          fontWeight:"bold",
-          fontSize: { xs: "1.25rem", sm: "1.5rem" }
-        }} 
+      <Stack 
+        direction="row" 
+        sx={{ 
+          mb: 2, 
+          justifyContent: "space-between", 
+          alignItems: "center", 
+          flexWrap: "wrap",
+          gap: 1 
+        }}
       >
-        Subscription Dashboard
-      </Typography>
+        <Typography 
+          variant="h6" 
+          component="h2"
+          sx={{
+            fontWeight:"bold",
+            fontSize: { xs: "1.25rem", sm: "1.5rem" }
+          }} 
+        >
+          Subscription Dashboard
+        </Typography>
+        <Button
+          component={RouterLink}
+          to="/payments"
+          variant="outlined"
+          startIcon={<ReceiptLongIcon />}
+          size="small"
+        >
+          Payment History
+        </Button>
+      </Stack>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -246,18 +268,30 @@ const handleCloseDialog = () => {
                   key={sub.id}
                   divider
                   sx={{
-                    pr: 11,
+                    pr: { xs: 14, sm: 16 },
                     alignItems: "flex-start",
                   }}
                   secondaryAction={
                     <Stack direction="row" spacing={0.5}>
+                      <Tooltip title="View payments">
+                        <IconButton
+                          edge="end"
+                          aria-label="payments"
+                          component={RouterLink}
+                          to={`/payments?subscriptionId=${sub.id}`}
+                          size="small"
+                        >
+                          <ReceiptLongIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                       <IconButton
                         edge="end"
                         aria-label="edit"
                         onClick={() => openUpdate(sub)}
                         disabled={isLoading}
+                        size="small"
                       >
-                        <EditIcon />
+                        <EditIcon fontSize="small" />
                       </IconButton>
                       <IconButton
                         edge="end"
@@ -265,8 +299,9 @@ const handleCloseDialog = () => {
                         color="error"
                         onClick={() => handleDeleteSubscription(sub.id)}
                         disabled={isLoading}
+                        size="small"
                       >
-                        <DeleteIcon />
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
                     </Stack>
                   }
@@ -342,10 +377,19 @@ const handleCloseDialog = () => {
         </CardContent>
       </Card>
 
-      <Card variant="outlined" sx={{ p: 2, textAlign: "center" }}>
-        <Stack direction="row" spacing={2}>
+      <Card variant="outlined" sx={{ p: 2 }}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ justifyContent: "center" }}>
           <Button variant="contained" onClick={openCreate} disabled={isLoading}>
             Create Subscription
+          </Button>
+          <Button 
+            variant="outlined" 
+            component={RouterLink} 
+            to="/payments"
+            startIcon={<ReceiptLongIcon />}
+            disabled={isLoading}
+          >
+            View Payment History
           </Button>
         </Stack>
       </Card>

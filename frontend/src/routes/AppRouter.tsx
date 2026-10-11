@@ -3,6 +3,7 @@ import  HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
+import PaymentsPage from "../pages/PaymentsPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 import Layout from "../components/Layout";
 import NotFoundPage from "../pages/NotFoundPage";
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
             {
 							path: "/dashboard",
               element: <DashboardPage />
+            },
+            {
+							path: "/payments",
+              element: <PaymentsPage />
             }
         	]
 				},

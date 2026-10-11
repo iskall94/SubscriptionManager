@@ -75,9 +75,17 @@ export default function Navbar() {
 
           <Box sx={{ display: { xs: "none", sm: "flex" }, gap: 1 }}>
             {isAuthenticated ? (
-              <Button onClick={handleLogout} color="inherit" size="small">
-                Log Out
-              </Button>
+              <>
+                <Button component={RouterLink} to="/dashboard" color="inherit" size="small">
+                  Dashboard
+                </Button>
+                <Button component={RouterLink} to="/payments" color="inherit" size="small">
+                  Payments
+                </Button>
+                <Button onClick={handleLogout} color="inherit" size="small">
+                  Log Out
+                </Button>
+              </>
             ) : (
               <>
                 <Button component={RouterLink} to="/login" color="inherit" size="small">
@@ -105,7 +113,27 @@ export default function Navbar() {
             onClose={handleClose}
           >
             {isAuthenticated ? (
-              <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+              [
+                <MenuItem 
+                  key="dashboard" 
+                  component={RouterLink} 
+                  to="/dashboard" 
+                  onClick={handleClose}
+                >
+                  Dashboard
+                </MenuItem>,
+                <MenuItem 
+                  key="payments" 
+                  component={RouterLink} 
+                  to="/payments" 
+                  onClick={handleClose}
+                >
+                  Payments
+                </MenuItem>,
+                <MenuItem key="logout" onClick={handleLogout}>
+                  Log Out
+                </MenuItem>
+              ]
             ) : (
               [
                 <MenuItem 
