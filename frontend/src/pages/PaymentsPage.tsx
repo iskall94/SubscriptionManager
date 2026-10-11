@@ -62,8 +62,6 @@ export default function PaymentsPage() {
   const [successMessage, setSuccessMessage] = useState<string>("");
 
   useEffect(() => {
-    loadData();
-  }, []);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -90,6 +88,9 @@ export default function PaymentsPage() {
       setIsLoading(false);
     }
   };
+  
+  loadData();
+  }, [searchParams, targetSubId]);
 
   const handleSubChangeInDialog = (subId: number) => {
     setTargetSubId(subId);

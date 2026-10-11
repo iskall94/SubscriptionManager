@@ -193,15 +193,6 @@ const handleCloseDialog = () => {
         >
           Subscription Dashboard
         </Typography>
-        <Button
-          component={RouterLink}
-          to="/payments"
-          variant="outlined"
-          startIcon={<ReceiptLongIcon />}
-          size="small"
-        >
-          Payment History
-        </Button>
       </Stack>
 
       {error && (
