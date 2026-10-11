@@ -1,5 +1,6 @@
 import { useState, useEffect, type SubmitEvent } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import axios from "axios";
 import { 
   getSubscriptions, 
   createSubscription, 
@@ -118,9 +119,10 @@ const handleCloseDialog = () => {
     setIsLoading(true);
 
 		const parsedPrice = parseFloat(price);
-		if (parsedPrice < 0) 
+		if (isNaN(parsedPrice) || parsedPrice < 0) 
 		{
-    	setError("Price cannot be negative");
+    	setError("Price must be a valid number and cannot be negative");
+    	setIsLoading(false);
     	return;
 		}
 
@@ -139,30 +141,41 @@ const handleCloseDialog = () => {
         setSubscriptions(subscriptions.map((s) => (s.id === selectedSubId ? updatedSub : s)));
       } else {
         const newSub = await createSubscription({
-        name,
-        price: parsedPrice,
-        currency,
-        interval: Number(interval),
-				firstBillingDate,
-        nextBillingDate: firstBillingDate,
-        categoryId: Number(categoryId),
-      });
+          name,
+          price: parsedPrice,
+          currency,
+          interval: Number(interval),
+          firstBillingDate,
+          nextBillingDate: firstBillingDate,
+          categoryId: Number(categoryId),
+        });
 
-      setSubscriptions([...subscriptions, newSub]);
+        setSubscriptions([...subscriptions, newSub]);
       }
       setIsDialogOpen(false);
       resetForm();
-    } catch {
-      setError(isEditing ? "Failed to update subscription" : "Failed to create subscription");
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const serverError = 
+          err.response?.data?.detail || 
+          err.response?.data?.title || 
+          (typeof err.response?.data === "string" ? err.response?.data : null);
+        setError(serverError || (isEditing ? "Failed to update subscription" : "Failed to create subscription"));
+      } else {
+        setError(isEditing ? "Failed to update subscription" : "Failed to create subscription");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDeleteSubscription = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this subscription?")) {
+      return;
+    }
     setIsLoading(true);
     try {
-      await deleteSubscription(id.toString());
+      await deleteSubscription(id);
       setSubscriptions(subscriptions.filter((s) => s.id !== id));
     } catch {
       setError("Failed to delete subscription");

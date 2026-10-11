@@ -1,4 +1,4 @@
-﻿namespace SubscriptionManager.Api.Infrastructure.Data.Repositories;
+namespace SubscriptionManager.Api.Infrastructure.Data.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Api.Domain.Entities;
@@ -16,6 +16,7 @@ public class CategoryRepository : ICategoryRepository
     {
         return await _db.Categories
             .AsNoTracking()
+            .OrderBy(c => c.Name)
             .ToListAsync();
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Api.Domain.Entities;
 using SubscriptionManager.Api.Domain.Enums;
@@ -54,6 +54,7 @@ public static class DbSeeding
                 Price = 119m,
                 Currency = "SEK",
                 Interval = BillingInterval.Monthly,
+                FirstBillingDate = DateOnly.FromDateTime(DateTime.UtcNow),
                 NextBillingDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
                 IsActive = true,
                 CategoryId = 1,

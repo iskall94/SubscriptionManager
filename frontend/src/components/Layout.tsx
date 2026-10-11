@@ -13,7 +13,7 @@ export default function Layout() {
 			}}
 		>
 			<Navbar />
-			<Box component="main" sx={{ flexgrow: 1 }}>
+			<Box component="main" sx={{ flexGrow: 1 }}>
 				<Outlet />
 			</Box>
 			<Footer />

@@ -1,4 +1,4 @@
-﻿using SubscriptionManager.Api.Domain.Enums;
+using SubscriptionManager.Api.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace SubscriptionManager.Api.Domain.DTOs;
@@ -12,8 +12,9 @@ public record UpdateSubscriptionDto(
     [StringLength(10, MinimumLength = 1, ErrorMessage = "Currency must be between 1 and 10 characters")]
     string Currency,
     BillingInterval Interval,
-    DateOnly FirstBillingDate,
     [Required(ErrorMessage = "First billing date is required")]
+    DateOnly FirstBillingDate,
     DateOnly NextBillingDate,
+    [Range(1, int.MaxValue, ErrorMessage = "A valid CategoryId must be selected")]
     int CategoryId
 );

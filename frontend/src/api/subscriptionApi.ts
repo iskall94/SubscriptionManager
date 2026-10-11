@@ -20,7 +20,7 @@ export async function createSubscription(subscription: CreateSubscriptionRequest
 	return response.data;
 }
 
-export async function deleteSubscription(subscriptionId: string): Promise<void> {
+export async function deleteSubscription(subscriptionId: number | string): Promise<void> {
 	await axios.delete(
 			`${API_BASE_URL}/subscriptions/${subscriptionId}`,
 			getAuthHeader()
@@ -29,7 +29,7 @@ export async function deleteSubscription(subscriptionId: string): Promise<void> 
 
 export async function updateSubscription(id: number, data: Partial<Subscription>): Promise<Subscription> {
   const response = await axios.put<Subscription>(
-		`/api/subscriptions/${id}`, 
+		`${API_BASE_URL}/subscriptions/${id}`, 
 		data,
     getAuthHeader()
   );

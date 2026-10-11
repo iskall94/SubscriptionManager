@@ -1,4 +1,4 @@
-﻿namespace SubscriptionManager.Api.Infrastructure.Data.Repositories;
+namespace SubscriptionManager.Api.Infrastructure.Data.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Api.Domain.Entities;
@@ -18,6 +18,7 @@ public class SubscriptionRepository : ISubscriptionRepository
             .AsNoTracking()
             .Include(s => s.Category)
             .Where(s => s.UserId == userId)
+            .OrderBy(s => s.NextBillingDate)
             .ToListAsync();
     }
 
